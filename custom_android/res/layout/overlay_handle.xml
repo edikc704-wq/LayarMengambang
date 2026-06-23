@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="28dp"
+    android:layout_height="64dp"
+    android:padding="4dp">
+
+    <View
+        android:layout_width="6dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:background="@drawable/handle_bar"/>
+</FrameLayout>

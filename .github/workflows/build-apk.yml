@@ -1,0 +1,46 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Scaffold folder android/ (gradle wrapper, icon default, dll)
+        run: |
+          flutter create --platforms=android --org com.edxzvip --project-name floatdock /tmp/scaffold
+          cp -r /tmp/scaffold/android ./android
+
+      - name: Tempel file custom (manifest, kotlin, layout)
+        run: |
+          cp custom_android/AndroidManifest.xml android/app/src/main/AndroidManifest.xml
+          mkdir -p android/app/src/main/kotlin/com/edxzvip/floatdock
+          cp custom_android/kotlin/com/edxzvip/floatdock/*.kt android/app/src/main/kotlin/com/edxzvip/floatdock/
+          cp -r custom_android/res/* android/app/src/main/res/
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: floatdock-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
